@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="dev.akampf.fileshare">
+
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.ACCESS_WIFI_STATE"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.CHANGE_WIFI_STATE"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE"
+        android:required="true" />
+
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <service
+            android:name=".SendFileOrNotifyOfIpAddressIntentService"
+            android:description="@string/wifi_direct_send_file_intent_service_description"
+            android:exported="false"
+            android:label="@string/wifi_direct_send_file_intent_service_label" />
+
+        <!-- TODO use string resource for label and for description (add that) -->
+        <service
+            android:name=".WiFiDirectBackgroundService"
+            android:exported="false"
+            android:label="Wi-Fi Direct Connection Establishment Group Owner Side" />
+
+        <activity android:name=".MainActivity">
+
+            <!-- make this activity appear openable from the home screen / launcher -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <!-- file provider registration needed to share files with other apps via content uris for temporary read access etc -->
+
+        <!-- TODO define authorities string in a way that adapts to package name changes -->
+        <!-- TODO from documentation of android:grantUriPermissions attribute: If you are supporting this feature, you must be sure to
+              call {@link android.content.Context#revokeUriPermission Context.revokeUriPermission} when URIs are deleted from your provider.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="dev.akampf.fileshare.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <!-- specify where the file specifying sharable paths and the mapped name in the content uri are specified: -->
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/content_provider_sharable_file_paths" />
+        </provider>
+    </application>
+
+</manifest>
